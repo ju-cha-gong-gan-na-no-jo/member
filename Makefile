@@ -15,3 +15,9 @@ add:
 
 select:
 	docker exec -i memberdb mysql --login-path=root member_db < db/sql/select.sql
+
+auto:
+	docker exec -i memberdb mysql --login-path=root member_db < db/sql/drop.sql
+	docker exec -i memberdb mysql --login-path=root member_db < db/sql/create.sql
+	docker exec -i memberdb mysql --login-path=root member_db < db/sql/add.sql
+	docker exec -i memberdb mysql --login-path=root member_db < db/sql/select.sql
