@@ -51,17 +51,120 @@ app.post('/user/resident/info/delete', (req, res) => {
 });
 
 // 상점 전체 데이터 불러오기
-app.get('/user/resident/info', (req, res) => {
-  const sql = 'select * from MEMBER_INFO';
+app.get('/user/store/info', (req, res) => {
+  const sql = 'select * from STORE';
   mysql_con.query(sql, function(err, rows){
     if (err) console.log(err);
     res.send(rows)
   });
 });
+
 // 상점 데이터 추가
+app.post('/user/store/add', (req, res) => {
+  const sql = 'INSERT INTO STORE(STORE_NUM, STORE_NAME, PHONE_NUM, ADDR, OWNER_NAME, JOINED_DATE, WITHDREW_DATE, ACCOUNT_NUM, REMARK) VALUES (3, "미소야", "010-7332-4819", "서울특별시 어딘가", "한송이", "2022-03-11", NULL, 2, "");';
+  mysql_con.query(sql, function(err){
+    if (err) console.log(err);
+    res.send("1 record inserted");
+    console.log("1 record inserted");
+  });
+});
 
 // 상점 데이터 수정
+app.post('/user/store/update', (req, res) => {
+  const sql = 'UPDATE STORE SET STORE_NAME="김밥천국", REMARK="수정되었습니다" WHERE STORE_NUM=3;';
+  mysql_con.query(sql, function(err){
+    if (err) console.log(err);
+    res.send("1 record changed");
+    console.log("1 record changed");
+  });
+});
 
 // 상점 데이터 삭제
+app.post('/user/store/delete', (req, res) => {
+  const sql = 'DELETE FROM STORE WHERE STORE_NUM=3;'
+  mysql_con.query(sql, function(err){
+    if (err) console.log(err);
+    res.send("1 record deleted");
+    console.log("1 record deleted");
+  });
+});
+
+// 1회 방문자 조회
+app.get('/user/guest/info', (req, res) => {
+  const sql = 'select * from GUEST';
+  mysql_con.query(sql, function(err, rows){
+    if (err) console.log(err);
+    res.send(rows)
+  });
+});
+
+// 1회 방문자 추가
+app.post('/user/guest/add', (req, res) => {
+  const sql = 'INSERT INTO GUEST(NAME, VISIT_DATE, CAR_NUM, PHONE_NUM, MEMBER_NUM, MEMBER_TYPE_NUM, REMARK) VALUES ("이민호", "2022-03-15", "334마8116", "010-5534-1997", 4, 2, "가전제품설치기사")';
+  mysql_con.query(sql, function(err){
+    if (err) console.log(err);
+    res.send("1 record inserted");
+    console.log("1 record inserted");
+  });
+});
+
+// 1회 방문자 수정
+app.post('/user/guest/update', (req, res) => {
+  const sql = 'UPDATE GUEST SET NAME="김아무개", REMARK="이름수정되었습니다" WHERE GUEST_NUM=4;';
+  mysql_con.query(sql, function(err){
+    if (err) console.log(err);
+    res.send("1 record changed");
+    console.log("1 record changed");
+  });
+});
+
+// 1회 방문자 삭제
+app.post('/user/guest/delete', (req, res) => {
+  const sql = 'DELETE FROM GUEST WHERE GUEST_NUM=3;'
+  mysql_con.query(sql, function(err){
+    if (err) console.log(err);
+    res.send("1 record deleted");
+    console.log("1 record deleted");
+  });
+});
+
+// 정기 방문자 조회
+app.get('/user/book/info', (req, res) => {
+  const sql = 'select * from BOOKED';
+  mysql_con.query(sql, function(err, rows){
+    if (err) console.log(err);
+    res.send(rows)
+  });
+});
+
+// 정기 방문자 추가
+app.post('/user/book/add', (req, res) => {
+  const sql = 'INSERT INTO BOOKED(BOOKED_PURPOSE, VALIDITY, PHONE_NUM, NAME, COMPANY_NAME, CAR_NUM, MEMBER_TYPE_NUM, REMARK) VALUES ("쓰레기수거", "2022-12-31", "010-7777-3554", "안나연", "수거1", "123호4884",  3, "")';
+  mysql_con.query(sql, function(err){
+    if (err) console.log(err);
+    res.send("1 record inserted");
+    console.log("1 record inserted");
+  });
+});
+
+// 정기 방문자 수정
+app.post('/user/book/update', (req, res) => {
+  const sql = 'UPDATE BOOKED SET NAME="소형준", CAR_NUM="888서3456", REMARK="hello!" WHERE BOOKED_NUM=2;';
+  mysql_con.query(sql, function(err){
+    if (err) console.log(err);
+    res.send("1 record changed");
+    console.log("1 record changed");
+  });
+});
+
+// 정기 방문자 삭제
+app.post('/user/book/delete', (req, res) => {
+  const sql = 'DELETE FROM BOOKED WHERE BOOKED_NUM=3;'
+  mysql_con.query(sql, function(err){
+    if (err) console.log(err);
+    res.send("1 record deleted");
+    console.log("1 record deleted");
+  });
+});
 
 module.exports = app;
