@@ -1,4 +1,5 @@
-const express = require('express')
+const express = require('express');
+const request = require('request');
 const app = express()
 const mysql = require('mysql')
 
@@ -165,6 +166,61 @@ app.post('/user/book/delete', (req, res) => {
     res.send("1 record deleted");
     console.log("1 record deleted");
   });
+});
+
+// 인증확인
+app.get('/user/auth', (req, res) => {
+  var url = "http://52.79.193.214:8080/wp-json/wp/v2/posts";
+  username = "root";
+  password = "member";
+  var auth = "Basic " + new Buffer(username + ":" + password).toString("base64");
+
+  const options = {
+    uri:url,
+    method:'GET',
+    headers : {
+      "Authorization": auth
+    }
+  }
+
+  request.get(options, function (error, response, body) {
+    if(error)
+   { console.error("Error while communication with api and ERROR is :  " + error);
+   res.send(error);
+  }
+    console.log('body : ', body);
+    res.send(body);
+  });
+});
+
+// 회원 가입
+app.post('/user/test', (req, res) => {
+  var url = "http://52.79.193.214:8080/wp-json/wp/v2/users";
+  username = "root";
+  password = "member";
+  var auth = "Basic " + new Buffer(username + ":" + password).toString("base64");
+  
+  const options = {
+    uri:url,
+    method:'POST',
+    headers : {
+      "Authorization": auth
+    },
+    form:{
+      username:"yoon",
+      email:"yoon@y.com",
+      password:"1234"
+    }
+  }
+    // do the GET request
+    request.post(options, function (error, response, body) {
+        if(error)
+       { console.error("Error while communication with api and ERROR is :  " + error);
+       res.send(error);
+    }
+        console.log('body : ', body);
+        res.send(body);
+    });    
 });
 
 module.exports = app;
