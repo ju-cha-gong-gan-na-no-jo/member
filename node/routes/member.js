@@ -128,7 +128,7 @@ app.post('/user/delete', (req, res) => {
 app.get('/user/auth', (req, res) => {
   var url = "http://52.79.193.214:8080/wp-json/wp/v2/posts";
   username = "hong";
-  password = "12345672";
+  password = "1234567";
   var auth = "Basic " + new Buffer(username + ":" + password).toString("base64");
 
   const options = {
@@ -168,7 +168,6 @@ app.post('/user/test', (req, res) => {
       password:"1234"
     }
   }
-    // do the GET request
     request.post(options, function (error, response, body) {
         if(error)
        { console.error("Error while communication with api and ERROR is :  " + error);
