@@ -150,7 +150,7 @@ app.get('/user/auth', (req, res) => {
 });
 
 // 회원 가입
-app.post('/user/add', (req, res) => {
+app.post('/user/create', (req, res) => {
   var url = "http://52.79.193.214:8080/wp-json/wp/v2/users";
   username = "root";
   password = "member";
