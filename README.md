@@ -26,26 +26,19 @@
 - 회원관리 모듈의 소스 폴더는 크게 node 폴더와 db 폴더로 나뉩니다 </br>
 
 1) node/   
-(1) app.js : 메인 서버를 실행시킵니다   
-(2) backup.js : AWS S3로 백업한 데이터를 전송합니다.   
-(3) node.sh : app.js를 제어하는 쉘 스크립트입니다.  
-<br/> 
-&nbsp;&nbsp;&nbsp;&nbsp;routes/   
-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;(1) member.js : REST API가 담겨있는 파일입니다.
+- app.js : 메인 서버를 실행시킵니다   
+- backup.js : AWS S3로 백업한 데이터를 전송합니다.   
+- node.sh : app.js를 제어하는 쉘 스크립트입니다.    
+- member.js : REST API가 담겨있는 파일입니다.   
 
 2. db/   
-(1) backup.sh : MySQL의 데이터를 백업하는 쉘 스크립트입니다.
-<br/>   
-&nbsp;&nbsp;&nbsp;&nbsp; sql/   
-&nbsp;&nbsp;&nbsp;&nbsp; (1) 테스트 목적으로 사용되는 SQL 문장입니다.   
-<br/>
+- backup.sh : MySQL의 데이터를 백업하는 쉘 스크립트입니다.
+- db/sql/ : 테스트 목적으로 사용되는 SQL 문장입니다.   
 
 ## 4. API 목록
 - /user/info : 전체 회원 데이터의 목록을 반환합니다.   
 - /user/add : 회원의 데이터를 DB에 추가합니다.   
 - /user/update : 갱신된 회원의 데이터를 DB에 반영합니다.   
-- /user/delete : 회원의 데이터를 DB에서 제거합니다.   
-<br/>
+- /user/delete : 회원의 데이터를 DB에서 제거합니다.<br/>
 - /user/auth : 입력한 계정의 ID와 비밀번호가 유효한지 확인합니다.   
 - /user/create : 계정을 생성합니다.   
