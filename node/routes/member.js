@@ -128,7 +128,7 @@ app.post('/user/delete', (req, res) => {
 app.get('/user/auth', (req, res) => {
   var url = "http://52.79.193.214:8080/wp-json/wp/v2/posts";
   username = "hong";
-  password = "1234567";
+  password = "12345dasasdasd67";
   var auth = "Basic " + new Buffer(username + ":" + password).toString("base64");
 
   const options = {
@@ -150,7 +150,7 @@ app.get('/user/auth', (req, res) => {
 });
 
 // 회원 가입
-app.post('/user/test', (req, res) => {
+app.post('/user/add', (req, res) => {
   var url = "http://52.79.193.214:8080/wp-json/wp/v2/users";
   username = "root";
   password = "member";
