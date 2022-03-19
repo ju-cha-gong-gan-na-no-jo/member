@@ -1,7 +1,18 @@
 const express = require('express');
 const request = require('request');
-const app = express()
-const mysql = require('mysql')
+const app = express();
+const mysql = require('mysql');
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended : false}));
+app.use(express.json());
+app.use(express.urlencoded({extended : true}));
+
+var member_num, name, dong, ho, phone_num, member_type_num, remark;
+var name, visit_date, car_num, phone_num, member_num, member_type_num, remark;
+var booked_purpose, validity, phone_num, name, company_name, car_num, member_type_num, remark;
+var store_num, store_name, phone_num, addr, owner_name, joined_date, withdrew_date, account_num, remark;
 
 // MySQL 연결
 const mysql_con = mysql.createConnection({
@@ -47,25 +58,59 @@ app.post('/user/add', (req, res) => {
   switch(arg){
     // 입주민
     case 1:
-      sql = 'INSERT INTO MEMBER_INFO(MEMBER_NUM, NAME, DONG, HO, PHONE_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (6, "홍길동", 201, 201, "010-8888-7777", 1, "");';
+      member_num = req.body.member_num;
+      name = req.body.name;
+      dong = req.body.dong;
+      ho = req.body.ho;
+      phone_num = req.body.phone_num;
+      member_type_num = req.body.member_type_num;
+      remark = req.body.remark;
+
+      sql = 'INSERT INTO MEMBER_INFO(MEMBER_NUM, NAME, DONG, HO, PHONE_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + member_num + ', '+ name + ', ' + dong + ', ' + ho + ', ' + phone_num + ', ' + member_type_num + ', ' + remark + ');';
       break;
     // 1회 방문자
     case 2:
-      sql = 'INSERT INTO GUEST(NAME, VISIT_DATE, CAR_NUM, PHONE_NUM, MEMBER_NUM, MEMBER_TYPE_NUM, REMARK) VALUES ("이민호", "2022-03-15", "334마8116", "010-5534-1997", 4, 2, "가전제품설치기사")';
+      name = req.body.name;
+      visit_date = req.body.visit_date;
+      car_num = req.body.car_num;
+      phone_num = req.body.phone_num;
+      member_num = req.body.member_num;
+      member_type_num = req.body.member_type_num;
+      remark = req.body.remark;
+
+      sql = 'INSERT INTO GUEST(NAME, VISIT_DATE, CAR_NUM, PHONE_NUM, MEMBER_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + name + ', ' + visit_date + ', ' + car_num + ', ' + phone_num + ', ' + member_num + ', ' + member_type_num + ', ' + remark + 'where ~~);';
       break;
     // 정기 방문자
     case 3:
-      sql = 'INSERT INTO BOOKED(BOOKED_PURPOSE, VALIDITY, PHONE_NUM, NAME, COMPANY_NAME, CAR_NUM, MEMBER_TYPE_NUM, REMARK) VALUES ("쓰레기수거", "2022-12-31", "010-7777-3554", "안나연", "수거1", "123호4884",  3, "")';
+      booked_purpose = req.body.booked_purpose;
+      validity = req.body.validity;
+      phone_num = req.body.phone_num;
+      name = req.body.name;
+      company_name = req.body.company_name;
+      car_num = req.body.car_num;
+      member_type_num = req.body.member_type_num;
+      remark = req.body.remark;
+
+      sql = 'INSERT INTO BOOKED(BOOKED_PURPOSE, VALIDITY, PHONE_NUM, NAME, COMPANY_NAME, CAR_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + booked_purpose + ', ' + validity + ', ' + phone_num + ', ' + name + ', ' + company_name + ', ' + car_num + ', ' + member_type_num + ', ' + remark + ');';
       break;
     // 상가
     case 4:
-      sql = 'INSERT INTO STORE(STORE_NUM, STORE_NAME, PHONE_NUM, ADDR, OWNER_NAME, JOINED_DATE, WITHDREW_DATE, ACCOUNT_NUM, REMARK) VALUES (3, "미소야", "010-7332-4819", "서울특별시 어딘가", "한송이", "2022-03-11", NULL, 2, "");';
+      store_num = req.body.store_num;
+      store_name = req.body.store_name;
+      phone_num = req.body.phone_num;
+      addr = req.body.addr;
+      owner_name = req.body.owner_name;
+      joined_date = req.body.joined_date;
+      withdrew_date = req.body.withdrew_date;
+      account_num = req.body.account_num;
+      remark = req.body.remark;
+
+      sql = 'INSERT INTO STORE(STORE_NUM, STORE_NAME, PHONE_NUM, ADDR, OWNER_NAME, JOINED_DATE, WITHDREW_DATE, ACCOUNT_NUM, REMARK) VALUES (' + store_num + ', ' + store_name + ', ' + phone_num + ', ' + addr + ', ' + owner_name + ', ' + joined_date + ', ' + withdrew_date + ', ' + account_num + ', ' + remark + ');';
       break;
   }
   mysql_con.query(sql, function(err){
     if (err) console.log(err);
     res.send("1 record inserted");
-    console.log("1 record inserted");
   });
 });
 
@@ -76,18 +121,56 @@ app.post('/user/update', (req, res) => {
   switch(arg){
     // 입주민
     case 1:
-      sql = 'UPDATE MEMBER_INFO SET NAME="김길동", DONG=111, HO=111, PHONE_NUM="010-1234-9999", MEMBER_TYPE_NUM=2, REMARK="HELLO!" WHERE MEMBER_NUM=19;';
+      member_num = req.body.member_num;
+      name = req.body.name;
+      dong = req.body.dong;
+      ho = req.body.ho;
+      phone_num = req.body.phone_num;
+      member_type_num = req.body.member_type_num;
+      remark = req.body.remark;
+
+      sql = 'UPDATE MEMBER_INFO SET NAME=' + name + ', DONG=' + dong + ', HO=' + ho + ', PHONE_NUM=' + phone_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE MEMBER_NUM=' + member_num + ';';
       break;
+
     // 1회 방문자
     case 2:
-      sql = 'UPDATE GUEST SET NAME="김아무개", REMARK="이름수정되었습니다" WHERE GUEST_NUM=4;';
+      name = req.body.name;
+      visit_date = req.body.visit_date;
+      car_num = req.body.car_num;
+      phone_num = req.body.phone_num;
+      member_num = req.body.member_num;
+      member_type_num = req.body.member_type_num;
+      remark = req.body.remark;
+      // select GUEST_NUM from GUEST where name="윤지우";
+      sql = 'UPDATE GUEST SET NAME=' + name + ', ' + 'VISIT_DATE=' + visit_date + ', CAR_NUM=' + car_num + ', PHONE_NUM=' + phone_num + ', MEMBER_NUM=' + member_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + REMARK + 'WHERE GUEST_NUM= + 4;';
       break;
+
     // 정기 방문자
     case 3:
-      sql = 'UPDATE BOOKED SET NAME="소형준", CAR_NUM="888서3456", REMARK="hello!" WHERE BOOKED_NUM=2;';
+      booked_purpose = req.body.booked_purpose;
+      validity = req.body.validity;
+      phone_num = req.body.phone_num;
+      name = req.body.name;
+      company_name = req.body.company_name;
+      car_num = req.body.car_num;
+      member_type_num = req.body.member_type_num;
+      remark = req.body.remark;
+
+      sql = 'UPDATE BOOKED SET NAME=' + name + ', CAR_NUM=' + car_num  + "888서3456", REMARK="hello!" WHERE BOOKED_NUM=2;';
       break;
+      
     // 상가
     case 4:
+      store_num = req.body.store_num;
+      store_name = req.body.store_name;
+      phone_num = req.body.phone_num;
+      addr = req.body.addr;
+      owner_name = req.body.owner_name;
+      joined_date = req.body.joined_date;
+      withdrew_date = req.body.withdrew_date;
+      account_num = req.body.account_num;
+      remark = req.body.remark;
+
       sql = 'UPDATE STORE SET STORE_NAME="김밥천국", REMARK="수정되었습니다" WHERE STORE_NUM=3;';
       break;
   }
@@ -128,12 +211,11 @@ app.post('/user/delete', (req, res) => {
 app.get('/user/auth', (req, res) => {
   var url = "http://52.79.193.214:8080/wp-json/wp/v2/posts";
   username = "hong";
-  password = "12345dasasdasd67";
-  var auth = "Basic " + new Buffer(username + ":" + password).toString("base64");
+  password = "12345678";
+  var auth = "Basic " + new Buffer.from(username + ":" + password).toString("base64");
 
   const options = {
     uri:url,
-    method:'GET',
     headers : {
       "Authorization": auth
     }
@@ -154,7 +236,7 @@ app.post('/user/create', (req, res) => {
   var url = "http://52.79.193.214:8080/wp-json/wp/v2/users";
   username = "root";
   password = "member";
-  var auth = "Basic " + new Buffer(username + ":" + password).toString("base64");
+  var auth = "Basic " + new Buffer.from(username + ":" + password).toString("base64");
   
   const options = {
     uri:url,

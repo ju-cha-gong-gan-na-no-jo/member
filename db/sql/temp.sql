@@ -1,1 +1,1 @@
-UPDATE BOOKED SET NAME="소형준", CAR_NUM="888서3456", REMARK="hello!" WHERE BOOKED_NUM=2;
+select GUEST_NUM from GUEST where name="윤지우";
