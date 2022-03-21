@@ -1,1 +1,1 @@
-select GUEST_NUM from GUEST where name="윤지우";
+UPDATE BOOKED SET NAME="윤치용" where NAME="전주원";

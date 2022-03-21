@@ -10,7 +10,13 @@
 
 ## 1. 개요
 - 본 모듈은 아마존 클라우드 환경에서 회원을 관리하는 기능을 담당합니다.
-- 회원 정보가 담긴 DB를 기반으로 인증을 진행하거나 메인 서버와 REST API로 통신하는 작업을 주로 진행합니다.
+- 회원 정보가 담긴 DB를 기반으로 인증을 진행하거나 메인 서버와 REST API로 통신하는 작업을 주로 진행합니다.   
+
+### 사전 준비<hr/>
+- MySQL 도커 이미지와 Wordpress 도커 이미지가 필요합니다.   
+- sudo docker pull emmyuel/wordpress
+- sudo docker pull emmyuel/mysql   
+
 <br/>
 <br/>
 

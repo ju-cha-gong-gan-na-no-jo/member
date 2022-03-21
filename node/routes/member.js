@@ -14,6 +14,7 @@ var name, visit_date, car_num, phone_num, member_num, member_type_num, remark;
 var booked_purpose, validity, phone_num, name, company_name, car_num, member_type_num, remark;
 var store_num, store_name, phone_num, addr, owner_name, joined_date, withdrew_date, account_num, remark;
 
+
 // MySQL 연결
 const mysql_con = mysql.createConnection({
   host: '127.0.0.1',
@@ -129,7 +130,7 @@ app.post('/user/update', (req, res) => {
       member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE MEMBER_INFO SET NAME=' + name + ', DONG=' + dong + ', HO=' + ho + ', PHONE_NUM=' + phone_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE MEMBER_NUM=' + member_num + ';';
+      sql = 'UPDATE MEMBER_INFO SET NAME=' + name + ', DONG=' + dong + ', HO=' + ho + ', PHONE_NUM=' + phone_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME=' + name + ';';
       break;
 
     // 1회 방문자
@@ -141,8 +142,8 @@ app.post('/user/update', (req, res) => {
       member_num = req.body.member_num;
       member_type_num = req.body.member_type_num;
       remark = req.body.remark;
-      // select GUEST_NUM from GUEST where name="윤지우";
-      sql = 'UPDATE GUEST SET NAME=' + name + ', ' + 'VISIT_DATE=' + visit_date + ', CAR_NUM=' + car_num + ', PHONE_NUM=' + phone_num + ', MEMBER_NUM=' + member_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + REMARK + 'WHERE GUEST_NUM= + 4;';
+
+      sql = 'UPDATE GUEST SET NAME=' + name + ', ' + 'VISIT_DATE=' + visit_date + ', CAR_NUM=' + car_num + ', PHONE_NUM=' + phone_num + ', MEMBER_NUM=' + member_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME= ' + name + ';';
       break;
 
     // 정기 방문자
@@ -156,7 +157,7 @@ app.post('/user/update', (req, res) => {
       member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE BOOKED SET NAME=' + name + ', CAR_NUM=' + car_num  + "888서3456", REMARK="hello!" WHERE BOOKED_NUM=2;';
+      sql = 'UPDATE BOOKED SET BOOKED_PURPOSE=' + booked_purpose + ', VALIDITY=' + validity + ', PHONE_NUM=' + phone_num + ', NAME=' + name + ', COMPANY_NAME=' + company_name + ', CAR_NUM=' + car_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME= ' + name + ';';
       break;
       
     // 상가
@@ -171,7 +172,7 @@ app.post('/user/update', (req, res) => {
       account_num = req.body.account_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE STORE SET STORE_NAME="김밥천국", REMARK="수정되었습니다" WHERE STORE_NUM=3;';
+      sql = 'UPDATE STORE SET STORE_NAME=' + store_name + ', PHONE_NUM= ' + phone_num + ', ADDR=' + addr + ', OWNER_NAME=' + owner_name + ', JOINED_DATE=' + joined_date + ', WITHDREW_DATE= ' + withdrew_date + ', ACCOUNT_NUM= ' + account_num + ', REMARK=' + remark + 'WHERE STORE_NAME=' + store_name + ';';
       break;
   }
   mysql_con.query(sql, function(err){
@@ -188,16 +189,30 @@ app.post('/user/delete', (req, res) => {
   switch(arg){
     // 입주민
     case 1:
-      sql = 'DELETE FROM MEMBER_INFO WHERE MEMBER_NUM=6;';
+      name = req.body.name;
+
+      sql = 'DELETE FROM MEMBER_INFO WHERE MEMBER_NAME=' + name + ';';
       break;
+
+    // 1회 방문자
     case 2:
-      sql = 'DELETE FROM GUEST WHERE GUEST_NUM=3;';
+      name = req.body.name;
+
+      sql = 'DELETE FROM GUEST WHERE NAME=' + name + ';';
       break;
+    
+    // 정기 방문자
     case 3:
-      sql = 'DELETE FROM BOOKED WHERE BOOKED_NUM=3;';
+      name = req.body.name;
+
+      sql = 'DELETE FROM GUEST WHERE NAME=' + name + ';';
       break;
+    
+    // 상가
     case 4:
-      sql = 'DELETE FROM STORE WHERE STORE_NUM=3;';
+      store_name = req.body.store_name;
+
+      sql = 'DELETE FROM STORE WHERE NAME=' + name + ';';
       break;
   }
   mysql_con.query(sql, function(err){
