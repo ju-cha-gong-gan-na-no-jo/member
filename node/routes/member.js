@@ -26,7 +26,7 @@ const mysql_con = mysql.createConnection({
 
 // 전체 데이터 조회
 app.get('/user/info', (req, res) => {
-  arg = 4
+  arg = 1
   var sql = 'select * from ';
   switch(arg){
     // 입주민
@@ -191,7 +191,7 @@ app.post('/user/delete', (req, res) => {
     case 1:
       name = req.body.name;
 
-      sql = 'DELETE FROM MEMBER_INFO WHERE MEMBER_NAME=' + name + ';';
+      sql = 'DELETE FROM MEMBER_INFO WHERE NAME=' + name + ';';
       break;
 
     // 1회 방문자
