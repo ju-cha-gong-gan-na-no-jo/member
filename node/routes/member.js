@@ -224,10 +224,10 @@ app.post('/user/delete/:arg', (req, res) => {
 
 // 인증확인
 app.get('/user/auth', (req, res) => {
-  var url = "http://52.79.193.214:8080/wp-json/wp/v2/posts";
+  const url = "http://52.79.193.214:8080/wp-json/wp/v2/posts";
   username = req.body.username;
   password = req.body.password;
-  var auth = "Basic " + new Buffer.from(username + ":" + password).toString("base64");
+  const auth = "Basic " + new Buffer.from(username + ":" + password).toString("base64");
 
   const options = {
     uri:url,
@@ -248,10 +248,10 @@ app.get('/user/auth', (req, res) => {
 
 // 회원 가입
 app.post('/user/create', (req, res) => {
-  var url = "http://52.79.193.214:8080/wp-json/wp/v2/users";
-  username = "root";
-  password = "member";
-  var auth = "Basic " + new Buffer.from(username + ":" + password).toString("base64");
+  const url = "http://52.79.193.214:8080/wp-json/wp/v2/users";
+  admin_name = "admin";
+  admin_pw = "member";
+  const auth = "Basic " + new Buffer.from(admin_name + ":" + admin_pw).toString("base64");
   
   const options = {
     uri:url,
@@ -264,7 +264,13 @@ app.post('/user/create', (req, res) => {
       email:req.body.email,
       password:req.body.password
     }
+    // form:{
+    //   username:"test",
+    //   email:"test@test.com",
+    //   password:"1234"
+    // }
   }
+
     request.post(options, function (error, response, body) {
         if(error)
        { console.error("Error while communication with api and ERROR is :  " + error);
