@@ -25,24 +25,24 @@ const mysql_con = mysql.createConnection({
 });
 
 // 전체 데이터 조회
-app.get('/user/info', (req, res) => {
-  arg = 1
-  var sql = 'select * from ';
+app.get('/user/info/:arg', (req, res) => {
+  const arg = req.params.arg;
+  let sql = 'select * from ';
   switch(arg){
     // 입주민
-    case 1:
+    case "member":
       sql = sql + 'MEMBER_INFO';
       break;
     // 1회 방문자
-    case 2:
+    case "guest":
       sql = sql + 'GUEST';
       break;
     // 정기 방문자
-    case 3:
+    case "book":
       sql = sql + 'BOOKED';
       break;
     // 상가
-    case 4:
+    case "store":
       sql = sql + 'STORE';
       break;
   }
@@ -53,12 +53,12 @@ app.get('/user/info', (req, res) => {
 });
 
 // 데이터 추가
-app.post('/user/add', (req, res) => {
-  arg = 1;
-  var sql = '';
+app.post('/user/add/:arg', (req, res) => {
+  const arg = req.params.arg;
+  let sql = '';
   switch(arg){
     // 입주민
-    case 1:
+    case "member":
       member_num = req.body.member_num;
       name = req.body.name;
       dong = req.body.dong;
@@ -70,7 +70,7 @@ app.post('/user/add', (req, res) => {
       sql = 'INSERT INTO MEMBER_INFO(MEMBER_NUM, NAME, DONG, HO, PHONE_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + member_num + ', '+ name + ', ' + dong + ', ' + ho + ', ' + phone_num + ', ' + member_type_num + ', ' + remark + ');';
       break;
     // 1회 방문자
-    case 2:
+    case "guest":
       name = req.body.name;
       visit_date = req.body.visit_date;
       car_num = req.body.car_num;
@@ -79,10 +79,10 @@ app.post('/user/add', (req, res) => {
       member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'INSERT INTO GUEST(NAME, VISIT_DATE, CAR_NUM, PHONE_NUM, MEMBER_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + name + ', ' + visit_date + ', ' + car_num + ', ' + phone_num + ', ' + member_num + ', ' + member_type_num + ', ' + remark + 'where ~~);';
+      sql = 'INSERT INTO GUEST(NAME, VISIT_DATE, CAR_NUM, PHONE_NUM, MEMBER_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + name + ', ' + visit_date + ', ' + car_num + ', ' + phone_num + ', ' + member_num + ', ' + member_type_num + ', ' + remark + ');';
       break;
     // 정기 방문자
-    case 3:
+    case "book":
       booked_purpose = req.body.booked_purpose;
       validity = req.body.validity;
       phone_num = req.body.phone_num;
@@ -95,7 +95,7 @@ app.post('/user/add', (req, res) => {
       sql = 'INSERT INTO BOOKED(BOOKED_PURPOSE, VALIDITY, PHONE_NUM, NAME, COMPANY_NAME, CAR_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + booked_purpose + ', ' + validity + ', ' + phone_num + ', ' + name + ', ' + company_name + ', ' + car_num + ', ' + member_type_num + ', ' + remark + ');';
       break;
     // 상가
-    case 4:
+    case "store":
       store_num = req.body.store_num;
       store_name = req.body.store_name;
       phone_num = req.body.phone_num;
@@ -225,8 +225,8 @@ app.post('/user/delete', (req, res) => {
 // 인증확인
 app.get('/user/auth', (req, res) => {
   var url = "http://52.79.193.214:8080/wp-json/wp/v2/posts";
-  username = "hong";
-  password = "12345678";
+  username = req.body.username;
+  password = req.body.password;
   var auth = "Basic " + new Buffer.from(username + ":" + password).toString("base64");
 
   const options = {
@@ -260,9 +260,9 @@ app.post('/user/create', (req, res) => {
       "Authorization": auth
     },
     form:{
-      username:"yoon",
-      email:"yoon@y.com",
-      password:"1234"
+      username:req.body.username,
+      email:req.body.email,
+      password:req.body.password
     }
   }
     request.post(options, function (error, response, body) {
