@@ -14,7 +14,6 @@ var name, visit_date, car_num, phone_num, member_num, member_type_num, remark;
 var booked_purpose, validity, phone_num, name, company_name, car_num, member_type_num, remark;
 var store_num, store_name, phone_num, addr, owner_name, joined_date, withdrew_date, account_num, remark;
 
-
 // MySQL 연결
 const mysql_con = mysql.createConnection({
   host: '127.0.0.1',
@@ -116,12 +115,13 @@ app.post('/user/add/:arg', (req, res) => {
 });
 
 // 데이터 수정
-app.post('/user/update', (req, res) => {
-  arg = 1;
-  var sql = '';
+app.post('/user/update/:arg', (req, res) => {
+  const arg = req.params.arg;
+  const name_old = req.body.name_old;
+  let sql = '';
   switch(arg){
     // 입주민
-    case 1:
+    case "member":
       member_num = req.body.member_num;
       name = req.body.name;
       dong = req.body.dong;
@@ -130,11 +130,11 @@ app.post('/user/update', (req, res) => {
       member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE MEMBER_INFO SET NAME=' + name + ', DONG=' + dong + ', HO=' + ho + ', PHONE_NUM=' + phone_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME=' + name + ';';
+      sql = 'UPDATE MEMBER_INFO SET NAME=' + name + ', DONG=' + dong + ', HO=' + ho + ', PHONE_NUM=' + phone_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME=' + name_old + ';';
       break;
 
     // 1회 방문자
-    case 2:
+    case "guest":
       name = req.body.name;
       visit_date = req.body.visit_date;
       car_num = req.body.car_num;
@@ -143,11 +143,11 @@ app.post('/user/update', (req, res) => {
       member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE GUEST SET NAME=' + name + ', ' + 'VISIT_DATE=' + visit_date + ', CAR_NUM=' + car_num + ', PHONE_NUM=' + phone_num + ', MEMBER_NUM=' + member_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME= ' + name + ';';
+      sql = 'UPDATE GUEST SET NAME=' + name + ', ' + 'VISIT_DATE=' + visit_date + ', CAR_NUM=' + car_num + ', PHONE_NUM=' + phone_num + ', MEMBER_NUM=' + member_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME= ' + name_old + ';';
       break;
 
     // 정기 방문자
-    case 3:
+    case "book":
       booked_purpose = req.body.booked_purpose;
       validity = req.body.validity;
       phone_num = req.body.phone_num;
@@ -157,11 +157,11 @@ app.post('/user/update', (req, res) => {
       member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE BOOKED SET BOOKED_PURPOSE=' + booked_purpose + ', VALIDITY=' + validity + ', PHONE_NUM=' + phone_num + ', NAME=' + name + ', COMPANY_NAME=' + company_name + ', CAR_NUM=' + car_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME= ' + name + ';';
+      sql = 'UPDATE BOOKED SET BOOKED_PURPOSE=' + booked_purpose + ', VALIDITY=' + validity + ', PHONE_NUM=' + phone_num + ', NAME=' + name + ', COMPANY_NAME=' + company_name + ', CAR_NUM=' + car_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME= ' + name_old + ';';
       break;
       
     // 상가
-    case 4:
+    case "store":
       store_num = req.body.store_num;
       store_name = req.body.store_name;
       phone_num = req.body.phone_num;
@@ -172,7 +172,7 @@ app.post('/user/update', (req, res) => {
       account_num = req.body.account_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE STORE SET STORE_NAME=' + store_name + ', PHONE_NUM= ' + phone_num + ', ADDR=' + addr + ', OWNER_NAME=' + owner_name + ', JOINED_DATE=' + joined_date + ', WITHDREW_DATE= ' + withdrew_date + ', ACCOUNT_NUM= ' + account_num + ', REMARK=' + remark + 'WHERE STORE_NAME=' + store_name + ';';
+      sql = 'UPDATE STORE SET STORE_NAME=' + store_name + ', PHONE_NUM= ' + phone_num + ', ADDR=' + addr + ', OWNER_NAME=' + owner_name + ', JOINED_DATE=' + joined_date + ', WITHDREW_DATE= ' + withdrew_date + ', ACCOUNT_NUM= ' + account_num + ', REMARK=' + remark + 'WHERE STORE_NAME=' + name_old + ';';
       break;
   }
   mysql_con.query(sql, function(err){
@@ -183,36 +183,36 @@ app.post('/user/update', (req, res) => {
 });
 
 // 데이터 삭제
-app.post('/user/delete', (req, res) => {
-  arg = 1;
-  var sql = '';
+app.post('/user/delete/:arg', (req, res) => {
+  const arg = req.params.arg;
+  let sql = '';
   switch(arg){
     // 입주민
-    case 1:
+    case "member":
       name = req.body.name;
 
       sql = 'DELETE FROM MEMBER_INFO WHERE NAME=' + name + ';';
       break;
 
     // 1회 방문자
-    case 2:
+    case "guest":
       name = req.body.name;
 
       sql = 'DELETE FROM GUEST WHERE NAME=' + name + ';';
       break;
     
     // 정기 방문자
-    case 3:
+    case "book":
       name = req.body.name;
 
-      sql = 'DELETE FROM GUEST WHERE NAME=' + name + ';';
+      sql = 'DELETE FROM BOOKED WHERE NAME=' + name + ';';
       break;
     
     // 상가
-    case 4:
+    case "store":
       store_name = req.body.store_name;
 
-      sql = 'DELETE FROM STORE WHERE NAME=' + name + ';';
+      sql = 'DELETE FROM STORE WHERE STORE_NAME=' + store_name + ';';
       break;
   }
   mysql_con.query(sql, function(err){
