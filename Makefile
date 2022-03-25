@@ -30,3 +30,6 @@ temp:
 
 app:
 	node ./node/app.js
+
+backup:
+	./db/backup.sh
