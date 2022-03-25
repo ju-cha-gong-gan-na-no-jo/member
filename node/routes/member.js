@@ -223,7 +223,7 @@ app.post('/user/delete/:arg', (req, res) => {
 });
 
 // 인증확인
-app.get('/user/auth', (req, res) => {
+app.post('/user/auth', (req, res) => {
   const url = "http://52.79.193.214:8080/wp-json/wp/v2/posts";
   username = req.body.username;
   password = req.body.password;
