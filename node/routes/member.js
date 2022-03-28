@@ -3,11 +3,15 @@ const request = require('request');
 const app = express();
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
+const EventEmitter = require('events');
+const myEvent = new EventEmitter();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : false}));
 app.use(express.json());
 app.use(express.urlencoded({extended : true}));
+
+
 
 var member_num, name, dong, ho, phone_num, member_type_num, remark;
 var name, visit_date, car_num, phone_num, member_num, member_type_num, remark;
@@ -244,15 +248,18 @@ app.post('/user/auth', (req, res) => {
     console.log('body : ', body);
     res.send(body);
   });
+ 
 });
 
 // 회원 가입
-app.post('/user/create', (req, res) => {
+app.post('/user/create', (req, res)=> {
   const url = "http://52.79.193.214:8080/wp-json/wp/v2/users";
   admin_name = "admin";
   admin_pw = "member";
   const auth = "Basic " + new Buffer.from(admin_name + ":" + admin_pw).toString("base64");
-  
+
+
+
   const options = {
     uri:url,
     method:'POST',
@@ -264,13 +271,11 @@ app.post('/user/create', (req, res) => {
       email:req.body.email,
       password:req.body.password
     }
-    // form:{
-    //   username:"test",
-    //   email:"test@test.com",
-    //   password:"1234"
-    // }
   }
 
+
+myEvent.on('event2', () => {
+	console.log('one')
     request.post(options, function (error, response, body) {
         if(error)
        { console.error("Error while communication with api and ERROR is :  " + error);
@@ -278,7 +283,19 @@ app.post('/user/create', (req, res) => {
     }
         console.log('body : ', body);
         res.send(body);
-    });    
+	
+    });
+    });
+    
+    
+	res.redirect('http://15.165.153.54:3000/login')
+
+
 });
+
+
+myEvent.emit('event2');
+
+
 
 module.exports = app;
