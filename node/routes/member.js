@@ -276,7 +276,22 @@ app.post('/user/create', (req, res) => {
        { console.error("Error while communication with api and ERROR is :  " + error);
        res.send(error);
     }
-        console.log('body : ', body);
+        // 회원가입에 성공하면 MySQL DB에 데이터 추가
+        if ((body[2]+body[3]) == "id"){
+          console.log("yes");
+          
+          sql = 'INSERT INTO ACCOUNT_INFO(USER_ID, USER_PW, ACCOUNT_TYPE) VALUES ("' + req.body.username.toString() + '","' + req.body.password.toString() + '", "상가");';
+
+          mysql_con.query(sql, function(err){
+            if (err) console.log(err);
+            console.log("1 record added");
+          });
+          
+        }
+        else{
+          console.log("no")
+        }
+
         res.send(body);
     });    
 });
