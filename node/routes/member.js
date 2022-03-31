@@ -240,7 +240,7 @@ app.post('/user/auth', (req, res) => {
     }
   }
 
-  request.get(options, function (error, response, body) {
+  request.post(options, function (error, response, body) {
     if(error)
    { console.error("Error while communication with api and ERROR is :  " + error);
    res.send(error);
@@ -274,8 +274,8 @@ app.post('/user/create', (req, res)=> {
   }
 
 
-myEvent.on('event2', () => {
-	console.log('one')
+//myEvent.on('event2', () => {
+	//console.log('one')
     request.post(options, function (error, response, body) {
         if(error)
        { console.error("Error while communication with api and ERROR is :  " + error);
@@ -285,16 +285,16 @@ myEvent.on('event2', () => {
         res.send(body);
 	
     });
-    });
+   // });
     
     
-	res.redirect('http://15.165.153.54:3000/login')
+	//res.redirect('http://15.165.153.54:3000/login')
 
 
 });
 
 
-myEvent.emit('event2');
+//myEvent.emit('event2');
 
 
 
