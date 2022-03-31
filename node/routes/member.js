@@ -236,7 +236,7 @@ app.post('/user/auth', (req, res) => {
     }
   }
 
-  request.get(options, function (error, response, body) {
+  request.post(options, function (error, response, body) {
     if(error)
    { console.error("Error while communication with api and ERROR is :  " + error);
    res.send(error);
