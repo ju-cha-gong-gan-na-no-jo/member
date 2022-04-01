@@ -3,6 +3,7 @@ const request = require('request');
 const app = express();
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
+const crypto = require("crypto")
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : false}));
@@ -224,76 +225,44 @@ app.post('/user/delete/:arg', (req, res) => {
 
 // 인증확인
 app.post('/user/auth', (req, res) => {
-  const url = "http://52.79.193.214:8080/wp-json/wp/v2/posts";
-  username = req.body.username;
-  password = req.body.password;
-  const auth = "Basic " + new Buffer.from(username + ":" + password).toString("base64");
+  let username = req.body.username;
+  let password = req.body.password;
 
-  const options = {
-    uri:url,
-    headers : {
-      "Authorization": auth
+  let encrypt = crypto.createHash("sha256")
+  encrypt.update(password)
+  password = encrypt.digest("hex")
+
+  sql = "select ACCOUNT_NUM, ACCOUNT_TYPE from ACCOUNT_INFO where USER_ID='" + username.toString() + "' and USER_PW='" + password.toString() + "';"
+  mysql_con.query(sql, function(err, rows){
+    if (rows.length < 1){
+      res.send("Invalid ID or Password!");
     }
-  }
-
-  request.post(options, function (error, response, body) {
-    if(error)
-   { console.error("Error while communication with api and ERROR is :  " + error);
-   res.send(error);
-  }
-    console.log('body : ', body);
-    res.send(body);
+    else{  
+      res.send(rows);
+    }
   });
 });
 
 // 회원 가입
 app.post('/user/create', (req, res) => {
-  const url = "http://52.79.193.214:8080/wp-json/wp/v2/users";
-  admin_name = "admin";
-  admin_pw = "member";
-  const auth = "Basic " + new Buffer.from(admin_name + ":" + admin_pw).toString("base64");
-  
-  const options = {
-    uri:url,
-    method:'POST',
-    headers : {
-      "Authorization": auth
-    },
-    form:{
-      username:req.body.username,
-      email:req.body.email,
-      password:req.body.password
+  const username = req.body.username;
+  let password = req.body.password;
+  const account_type = req.body.account_type;
+
+  let encrypt = crypto.createHash("sha256")
+  encrypt.update(password)
+  password = encrypt.digest("hex")
+
+  sql = 'INSERT INTO ACCOUNT_INFO(USER_ID, USER_PW, ACCOUNT_TYPE) VALUES ("' + username + '", "' + password + '", "' + account_type + '")';
+  mysql_con.query(sql, function(err){
+    if (err) {
+      console.log(err)
+      res.send("Failed to create account!");
     }
-    // form:{
-    //   username:"test",
-    //   email:"test@test.com",
-    //   password:"1234"
-    // }
-  }
-
-    request.post(options, function (error, response, body) {
-        if(error)
-       { console.error("Error while communication with api and ERROR is :  " + error);
-       res.send(error);
+    else{
+      res.send("Successfully create account!");
     }
-        // 회원가입에 성공하면 MySQL DB에 데이터 추가
-        if ((body[2]+body[3]) == "id"){
-          console.log("yes");
-          
-          sql = 'INSERT INTO ACCOUNT_INFO(USER_ID, USER_PW, ACCOUNT_TYPE) VALUES ("' + req.body.username.toString() + '","' + req.body.password.toString() + '", "상가");';
-
-          mysql_con.query(sql, function(err){
-            if (err) console.log(err);
-            console.log("1 record added");
-          });
-          
-        }
-        else{
-          console.log("no")
-        }
-
-        res.send(body);
-    });    
+  });
 });
 
 module.exports = app;
