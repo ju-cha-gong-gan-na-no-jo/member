@@ -52,6 +52,31 @@ app.get('/user/info/:arg', (req, res) => {
   });
 });
 
+// 회원여부 조회
+app.post('/user/info/', (req, res) => {
+  const car_num = req.body.car_num;
+  let sql = 'SELECT MEMBER_TYPE_NUM FROM CAR_INFO where CAR_NUM="' + car_num + '";';
+
+  mysql_con.query(sql, function(err, result){
+    if (err) 
+      res.send("An error occurred!");
+    else
+    {
+      if (result.length < 1){
+        res.send("올바르지 않은 입력입니다.")
+        return;
+      }
+      const member_type = result[0].MEMBER_TYPE_NUM;
+      if (member_type == 1){
+        res.send("회원")
+      }
+      else{
+        res.send("비회원")
+      }
+    }
+  });
+});
+
 // 데이터 추가
 app.post('/user/add/:arg', (req, res) => {
   const arg = req.params.arg;
