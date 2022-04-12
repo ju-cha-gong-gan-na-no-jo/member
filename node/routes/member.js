@@ -140,8 +140,8 @@ app.post('/user/add/:arg', (req, res) => {
       member_type_num = req.body.member_type_num;
       car_num = req.body.car_num;
       remark = req.body.remark;
-      
-      sql = 'INSERT INTO MEMBER_INFO(MEMBER_NUM, NAME, DONG, HO, PHONE_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + member_num + ', '+ name + ', ' + dong + ', ' + ho + ', ' + phone_num + ', ' + member_type_num + ', ' + remark + ');';
+      console.log(name);
+      sql = 'INSERT INTO MEMBER_INFO(MEMBER_NUM, NAME, DONG, HO, PHONE_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + member_num + ', "'+ name + '", ' + dong + ', ' + ho + ', ' + phone_num + ', ' + member_type_num + ', ' + remark + ');';
       sql_car = 'INSERT INTO CAR_INFO(CAR_NUM, MEMBER_NUM, MEMBER_TYPE_NUM) VALUES ("' + car_num + '", ' + member_num + ', ' + member_type_num + ');';
       
       break;
