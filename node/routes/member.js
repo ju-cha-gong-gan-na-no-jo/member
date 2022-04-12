@@ -27,11 +27,11 @@ const mysql_con = mysql.createConnection({
 // 전체 데이터 조회
 app.get('/user/info/:arg', (req, res) => {
   const arg = req.params.arg;
-  let sql = 'select * from ';
+  let sql = 'SELECT * FROM ';
   switch(arg){
     // 입주민
     case "member":
-      sql = sql + 'MEMBER_INFO';
+      sql = 'SELECT m.MEMBER_NUM, m.NAME, m.DONG, m.HO, m.PHONE_NUM, m.MEMBER_TYPE_NUM, c.CAR_NUM FROM MEMBER_INFO m, CAR_INFO c where m.MEMBER_NUM=c.MEMBER_NUM;';
       break;
     // 1회 방문자
     case "guest":
@@ -46,6 +46,39 @@ app.get('/user/info/:arg', (req, res) => {
       sql = sql + 'STORE';
       break;
   }
+
+  mysql_con.query(sql, function(err, rows){
+    if (err) console.log(err);
+    res.send(rows)
+  });
+});
+
+// 차량번호 데이터 조회
+app.post('/user/info/car/:arg', (req, res) => {
+  const arg = req.params.arg
+  const car_num = req.body.car_num;
+  let sql = 'SELECT * FROM ';
+  switch(arg){
+    case "member":
+      sql = 'SELECT m.MEMBER_NUM, m.NAME, m.DONG, m.HO, m.PHONE_NUM, m.MEMBER_TYPE_NUM, c.CAR_NUM FROM MEMBER_INFO m, CAR_INFO c where m.MEMBER_NUM=c.MEMBER_NUM and car_num="' + car_num + '";';
+      break;
+    case "guest":
+      sql = sql + 'GUEST WHERE CAR_NUM="' + car_num + '";';
+      break;
+    case "book":
+      sql = sql + 'BOOKED WHERE CAR_NUM="' + car_num + '";';
+      break;
+    }
+  mysql_con.query(sql, function(err, rows){
+    if (err) console.log(err);
+    res.send(rows)
+  });
+});
+
+// 상점 이름으로 데이터 조회
+app.post('/user/info/name', (req, res) => {
+  const store_name = req.body.store_name;
+  sql = "SELECT * FROM STORE WHERE STORE_NAME='" + store_name + "';";
   mysql_con.query(sql, function(err, rows){
     if (err) console.log(err);
     res.send(rows)
@@ -90,9 +123,11 @@ app.post('/user/add/:arg', (req, res) => {
       ho = req.body.ho;
       phone_num = req.body.phone_num;
       member_type_num = req.body.member_type_num;
+      car_num = req.body.car_num;
       remark = req.body.remark;
-
+      
       sql = 'INSERT INTO MEMBER_INFO(MEMBER_NUM, NAME, DONG, HO, PHONE_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + member_num + ', '+ name + ', ' + dong + ', ' + ho + ', ' + phone_num + ', ' + member_type_num + ', ' + remark + ');';
+      sql_car = 'INSERT INTO CAR_INFO(CAR_NUM, MEMBER_NUM, MEMBER_TYPE_NUM) VALUES ("' + car_num + '", ' + member_num + ', ' + member_type_num + ');';
       break;
     // 1회 방문자
     case "guest":
@@ -134,7 +169,8 @@ app.post('/user/add/:arg', (req, res) => {
       sql = 'INSERT INTO STORE(STORE_NUM, STORE_NAME, PHONE_NUM, ADDR, OWNER_NAME, JOINED_DATE, WITHDREW_DATE, ACCOUNT_NUM, REMARK) VALUES (' + store_num + ', ' + store_name + ', ' + phone_num + ', ' + addr + ', ' + owner_name + ', ' + joined_date + ', ' + withdrew_date + ', ' + account_num + ', ' + remark + ');';
       break;
   }
-  mysql_con.query(sql, function(err){
+  mysql_con.query(sql);
+  mysql_con.query(sql_car, function(err){
     if (err) console.log(err);
     res.send("1 record inserted");
   });
