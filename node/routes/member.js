@@ -2,6 +2,7 @@ const express = require('express');
 const request = require('request');
 const app = express();
 const mysql = require('mysql');
+const mysql_sync = require('sync-mysql');
 const bodyParser = require('body-parser');
 const crypto = require("crypto")
 
@@ -17,6 +18,15 @@ var store_num, store_name, phone_num, addr, owner_name, joined_date, withdrew_da
 
 // MySQL 연결
 const mysql_con = mysql.createConnection({
+  host: '127.0.0.1',
+  port: '3306',
+  user: 'root',
+  password: 'member',
+  database: 'member_db'
+});
+
+// 동기처리를 위한 MySQL 연결
+const mysql_con_sync = new mysql_sync({
   host: '127.0.0.1',
   port: '3306',
   user: 'root',
@@ -52,6 +62,7 @@ app.get('/user/info/:arg', (req, res) => {
     res.send(rows)
   });
 });
+
 
 // 차량번호 데이터 조회
 app.post('/user/info/car/:arg', (req, res) => {
@@ -114,10 +125,14 @@ app.post('/user/info/', (req, res) => {
 app.post('/user/add/:arg', (req, res) => {
   const arg = req.params.arg;
   let sql = '';
+
+  let max_member_num_query = mysql_con_sync.query('select max(MEMBER_NUM) as num from MEMBER_INFO;');
+  max_member_num = max_member_num_query[0].num;
+
   switch(arg){
     // 입주민
     case "member":
-      member_num = req.body.member_num;
+      member_num =  max_member_num + 1;
       name = req.body.name;
       dong = req.body.dong;
       ho = req.body.ho;
@@ -128,6 +143,7 @@ app.post('/user/add/:arg', (req, res) => {
       
       sql = 'INSERT INTO MEMBER_INFO(MEMBER_NUM, NAME, DONG, HO, PHONE_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + member_num + ', '+ name + ', ' + dong + ', ' + ho + ', ' + phone_num + ', ' + member_type_num + ', ' + remark + ');';
       sql_car = 'INSERT INTO CAR_INFO(CAR_NUM, MEMBER_NUM, MEMBER_TYPE_NUM) VALUES ("' + car_num + '", ' + member_num + ', ' + member_type_num + ');';
+      
       break;
     // 1회 방문자
     case "guest":
