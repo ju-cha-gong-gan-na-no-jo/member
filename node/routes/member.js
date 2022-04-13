@@ -140,8 +140,8 @@ app.post('/user/add/:arg', (req, res) => {
       member_type_num = req.body.member_type_num;
       car_num = req.body.car_num;
       remark = req.body.remark;
-      console.log(name);
-      sql = 'INSERT INTO MEMBER_INFO(MEMBER_NUM, NAME, DONG, HO, PHONE_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + member_num + ', "'+ name + '", ' + dong + ', ' + ho + ', ' + phone_num + ', ' + member_type_num + ', ' + remark + ');';
+
+      sql = 'INSERT INTO MEMBER_INFO(MEMBER_NUM, NAME, DONG, HO, PHONE_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + member_num + ', "'+ name + '", ' + dong + ', ' + ho + ', ' + phone_num + ', ' + member_type_num + ', "' + remark + '");';
       sql_car = 'INSERT INTO CAR_INFO(CAR_NUM, MEMBER_NUM, MEMBER_TYPE_NUM) VALUES ("' + car_num + '", ' + member_num + ', ' + member_type_num + ');';
       
       break;
@@ -155,7 +155,7 @@ app.post('/user/add/:arg', (req, res) => {
       member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'INSERT INTO GUEST(NAME, VISIT_DATE, CAR_NUM, PHONE_NUM, MEMBER_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + name + ', ' + visit_date + ', ' + car_num + ', ' + phone_num + ', ' + member_num + ', ' + member_type_num + ', ' + remark + ');';
+      sql = 'INSERT INTO GUEST(NAME, VISIT_DATE, CAR_NUM, PHONE_NUM, MEMBER_NUM, MEMBER_TYPE_NUM, REMARK) VALUES ("' + name + '", "' + visit_date + '", "' + car_num + '", "' + phone_num + '", ' + member_num + ', ' + member_type_num + ', "' + remark + '");';
       break;
     // 정기 방문자
     case "book":
@@ -168,7 +168,7 @@ app.post('/user/add/:arg', (req, res) => {
       member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'INSERT INTO BOOKED(BOOKED_PURPOSE, VALIDITY, PHONE_NUM, NAME, COMPANY_NAME, CAR_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + booked_purpose + ', ' + validity + ', ' + phone_num + ', ' + name + ', ' + company_name + ', ' + car_num + ', ' + member_type_num + ', ' + remark + ');';
+      sql = 'INSERT INTO BOOKED(BOOKED_PURPOSE, VALIDITY, PHONE_NUM, NAME, COMPANY_NAME, CAR_NUM, MEMBER_TYPE_NUM, REMARK) VALUES ("' + booked_purpose + '", "' + validity + '", "' + phone_num + '", "' + name + '", "' + company_name + '", "' + car_num + '", ' + member_type_num + ', "' + remark + '");';
       break;
     // 상가
     case "store":
@@ -182,14 +182,26 @@ app.post('/user/add/:arg', (req, res) => {
       account_num = req.body.account_num;
       remark = req.body.remark;
 
-      sql = 'INSERT INTO STORE(STORE_NUM, STORE_NAME, PHONE_NUM, ADDR, OWNER_NAME, JOINED_DATE, WITHDREW_DATE, ACCOUNT_NUM, REMARK) VALUES (' + store_num + ', ' + store_name + ', ' + phone_num + ', ' + addr + ', ' + owner_name + ', ' + joined_date + ', ' + withdrew_date + ', ' + account_num + ', ' + remark + ');';
+      if (withdrew_date == "NULL" || withdrew_date == "null"){
+        sql = 'INSERT INTO STORE(STORE_NUM, STORE_NAME, PHONE_NUM, ADDR, OWNER_NAME, JOINED_DATE, WITHDREW_DATE, ACCOUNT_NUM, REMARK) VALUES (' + store_num + ', "' + store_name + '", "' + phone_num + '", "' + addr + '", "' + owner_name + '", "' + joined_date + '", ' + withdrew_date + ', ' + account_num + ', "' + remark + '");';
+      }
+      else{
+        sql = 'INSERT INTO STORE(STORE_NUM, STORE_NAME, PHONE_NUM, ADDR, OWNER_NAME, JOINED_DATE, WITHDREW_DATE, ACCOUNT_NUM, REMARK) VALUES (' + store_num + ', "' + store_name + '", "' + phone_num + '", "' + addr + '", "' + owner_name + '", "' + joined_date + '", "' + withdrew_date + '", ' + account_num + ', "' + remark + '");';
+      }
       break;
   }
-  mysql_con.query(sql);
-  mysql_con.query(sql_car, function(err){
+  mysql_con.query(sql, function(err){
     if (err) console.log(err);
-    res.send("1 record inserted");
   });
+  if(arg == "member"){
+    mysql_con.query(sql_car, function(err){
+      if (err) console.log(err);
+      res.send("1 record inserted");
+    });
+  }
+  else{
+    res.send("1 record inserted")
+  }
 });
 
 // 데이터 수정
