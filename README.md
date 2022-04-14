@@ -34,7 +34,7 @@
 
 1) node/   
 - app.js : 메인 서버를 실행시킵니다   
-- backup.js : AWS S3로 백업한 데이터를 전송합니다.   
+- upload.js : AWS S3로 백업한 데이터를 전송합니다.   
 - node.sh : app.js의 동작을 제어하는 쉘 스크립트입니다.    
 - member.js : REST API가 담겨있는 파일입니다.   
 
@@ -43,9 +43,12 @@
 - db/sql/ : 테스트 목적으로 사용되는 SQL 문장입니다.   
 
 ## 5. REST API 목록
-- /user/info : 전체 회원 데이터의 목록을 반환합니다.   
-- /user/add : 회원의 데이터를 DB에 추가합니다.   
-- /user/update : 갱신된 회원의 데이터를 DB에 반영합니다.   
-- /user/delete : 회원의 데이터를 DB에서 제거합니다.<br/>
+- /user/info/:arg : 회원, 비회원 또는 상가의 데이터를 조회하여 반환합니다.  
+- /user/info : 입력된 차량번호를 바탕으로 회원 여부를 조회하여 반환합니다.
+- /user/info/car : 입력된 차량번호를 바탕으로 데이터를 조회하여 반환합니다.   
+- /user/info/name : 입력된 상점이름을 바탕으로 데이터를 조회하여 반환합니다.    
+- /user/add/:arg : 회원, 비회원 및 상가의 데이터를 DB에 추가합니다. 상점의 경우 계정생성까지 진행합니다.     
+- /user/update/:arg : 갱신된 회원의 데이터를 DB에 반영합니다.   
+- /user/delete/:arg : 회원의 데이터를 DB에서 제거합니다.   
 - /user/auth : 입력한 계정의 ID와 비밀번호가 유효한지 확인합니다.   
-- /user/create : 계정을 생성합니다.   
+- /user/create : 관리자 계정을 생성합니다.   

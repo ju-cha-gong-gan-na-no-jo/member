@@ -175,8 +175,8 @@ app.post('/user/add/:arg', (req, res) => {
       sql = 'INSERT INTO BOOKED(BOOKED_PURPOSE, VALIDITY, PHONE_NUM, NAME, COMPANY_NAME, CAR_NUM, MEMBER_TYPE_NUM, REMARK) VALUES ("' + booked_purpose + '", "' + validity + '", "' + phone_num + '", "' + name + '", "' + company_name + '", "' + car_num + '", ' + member_type_num + ', "' + remark + '");';
       break;
     // 상가
-    case "store":
-
+    case "store":    
+      // 계정 번호값 부여
       let max_account_num_query = mysql_con_sync.query('select max(ACCOUNT_NUM) as num from ACCOUNT_INFO;');
 
       if(!max_account_num_query[0].num){
@@ -186,6 +186,7 @@ app.post('/user/add/:arg', (req, res) => {
         account_num =  max_account_num_query[0].num + 1;
       }
 
+      // id 및 password DB에 insert
       const user_id = req.body.user_id;
       let password = req.body.password;
       const account_type = req.body.account_type;
@@ -200,6 +201,7 @@ app.post('/user/add/:arg', (req, res) => {
         if (err) console.log(err);
       });
 
+      // 상점 번호값 부여
       let max_store_num_query = mysql_con_sync.query('select max(STORE_NUM) as num from STORE;');
 
       if(!max_store_num_query[0].num){
