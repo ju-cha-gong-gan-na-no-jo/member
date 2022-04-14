@@ -257,7 +257,7 @@ app.post('/user/update/:arg', (req, res) => {
       member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE MEMBER_INFO SET NAME=' + name + ', DONG=' + dong + ', HO=' + ho + ', PHONE_NUM=' + phone_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME=' + name_old + ';';
+      sql = 'UPDATE MEMBER_INFO SET NAME="' + name + '", DONG=' + dong + ', HO=' + ho + ', PHONE_NUM="' + phone_num + '", MEMBER_TYPE_NUM=' + member_type_num + ', REMARK="' + remark + '" WHERE NAME="' + name_old + '";';
       break;
 
     // 1회 방문자
@@ -270,7 +270,7 @@ app.post('/user/update/:arg', (req, res) => {
       member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE GUEST SET NAME=' + name + ', ' + 'VISIT_DATE=' + visit_date + ', CAR_NUM=' + car_num + ', PHONE_NUM=' + phone_num + ', MEMBER_NUM=' + member_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME= ' + name_old + ';';
+      sql = 'UPDATE GUEST SET NAME="' + name + '", ' + 'VISIT_DATE="' + visit_date + '", CAR_NUM="' + car_num + '", PHONE_NUM="' + phone_num + '", MEMBER_NUM=' + member_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK="' + remark + '" WHERE NAME= "' + name_old + '";';
       break;
 
     // 정기 방문자
@@ -299,7 +299,7 @@ app.post('/user/update/:arg', (req, res) => {
       account_num = req.body.account_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE STORE SET STORE_NAME=' + store_name + ', PHONE_NUM= ' + phone_num + ', ADDR=' + addr + ', OWNER_NAME=' + owner_name + ', JOINED_DATE=' + joined_date + ', WITHDREW_DATE= ' + withdrew_date + ', ACCOUNT_NUM= ' + account_num + ', REMARK=' + remark + 'WHERE STORE_NAME=' + name_old + ';';
+      sql = 'UPDATE STORE SET STORE_NAME="' + store_name + '", PHONE_NUM= "' + phone_num + '", ADDR="' + addr + '", OWNER_NAME="' + owner_name + '", JOINED_DATE="' + joined_date + '", WITHDREW_DATE= "' + withdrew_date + '", ACCOUNT_NUM= ' + account_num + '", REMARK="' + remark + 'WHERE STORE_NAME="' + name_old + '";';
       break;
   }
   mysql_con.query(sql, function(err){
@@ -317,34 +317,49 @@ app.post('/user/delete/:arg', (req, res) => {
     case "member":
       name = req.body.name;
 
-      sql = 'DELETE FROM MEMBER_INFO WHERE NAME=' + name + ';';
+      sql = 'DELETE FROM MEMBER_INFO WHERE NAME="' + name + '";';
       break;
 
     // 1회 방문자
     case "guest":
       name = req.body.name;
 
-      sql = 'DELETE FROM GUEST WHERE NAME=' + name + ';';
+      sql = 'DELETE FROM GUEST WHERE NAME="' + name + '";';
       break;
     
     // 정기 방문자
     case "book":
       name = req.body.name;
 
-      sql = 'DELETE FROM BOOKED WHERE NAME=' + name + ';';
+      sql = 'DELETE FROM BOOKED WHERE NAME="' + name + '";';
       break;
     
     // 상가
     case "store":
-      store_name = req.body.store_name;
+      store_name = req.body.store_name;   
+      let account_num = mysql_con_sync.query('SELECT ACCOUNT_NUM as num FROM STORE WHERE STORE_NAME="' + store_name + '";');
+      account_num = account_num[0].num;
 
-      sql = 'DELETE FROM STORE WHERE STORE_NAME=' + store_name + ';';
+      mysql_con_sync.query('SET foreign_key_checks = 0;');
+      mysql_con_sync.query('DELETE FROM ACCOUNT_INFO WHERE ACCOUNT_NUM=' + account_num.toString() + ';');
+      mysql_con_sync.query('SELECT * FROM ACCOUNT_INFO;');
+
       break;
   }
-  mysql_con.query(sql, function(err){
-    if (err) console.log(err);
-    res.send("1 record deleted");
-  });
+  if(arg == "store"){
+    sql = 'DELETE FROM STORE WHERE STORE_NAME="' + store_name + '";';
+    mysql_con.query(sql, function(err){
+      if (err) console.log(err);
+      res.send("1 record deleted");
+    });
+    mysql_con_sync.query('SET foreign_key_checks = 1;');
+  }
+  else{
+    mysql_con.query(sql, function(err){
+      if (err) console.log(err);
+      res.send("1 record deleted");
+    });
+  }
 });
 
 // 인증확인
@@ -369,7 +384,19 @@ app.post('/user/auth', (req, res) => {
 
 // 관리자 회원 가입
 app.post('/user/create', (req, res) => {
-  const username = req.body.username;
+
+  // 계정 번호값 부여
+  let max_account_num_query = mysql_con_sync.query('select max(ACCOUNT_NUM) as num from ACCOUNT_INFO;');
+
+  if(!max_account_num_query[0].num){
+    account_num = 1;
+  }
+  else{
+    account_num =  max_account_num_query[0].num + 1;
+  }
+
+  // id 및 password DB에 insert
+  const user_id = req.body.user_id;
   let password = req.body.password;
   const account_type = req.body.account_type;
 
@@ -377,14 +404,15 @@ app.post('/user/create', (req, res) => {
   encrypt.update(password)
   password = encrypt.digest("hex")
 
-  sql = 'INSERT INTO ACCOUNT_INFO(USER_ID, USER_PW, ACCOUNT_TYPE) VALUES ("' + username + '", "' + password + '", "' + account_type + '")';
+  sql = 'INSERT INTO ACCOUNT_INFO(ACCOUNT_NUM, USER_ID, USER_PW, ACCOUNT_TYPE) VALUES (' + account_num + ', "' + user_id + '", "' + password + '", "' + account_type + '")';
+
   mysql_con.query(sql, function(err){
     if (err) {
       console.log(err)
-      res.send("Failed to create account!");
+      res.send("Failed to create administrator account!");
     }
     else{
-      res.send("Successfully create account!");
+      res.send("Successfully create administrator account!");
     }
   });
 });
