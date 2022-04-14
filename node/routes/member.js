@@ -364,14 +364,14 @@ app.post('/user/delete/:arg', (req, res) => {
 
 // 인증확인
 app.post('/user/auth', (req, res) => {
-  let username = req.body.username;
+  let user_id = req.body.user_id;
   let password = req.body.password;
 
   let encrypt = crypto.createHash("sha256")
   encrypt.update(password)
   password = encrypt.digest("hex")
 
-  sql = "select ACCOUNT_NUM, ACCOUNT_TYPE from ACCOUNT_INFO where USER_ID='" + username.toString() + "' and USER_PW='" + password.toString() + "';"
+  sql = "select USER_ID, ACCOUNT_NUM, ACCOUNT_TYPE from ACCOUNT_INFO where USER_ID='" + user_id.toString() + "' and USER_PW='" + password.toString() + "';"
   mysql_con.query(sql, function(err, rows){
     if (rows.length < 1){
       res.send("Invalid ID or Password!");
