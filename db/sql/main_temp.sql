@@ -5,4 +5,4 @@
 -- select STORE_NAME as 유형, count(*) as 대수, sum(PARK_TIME) as 시간, sum(PAY_AMOUNT) as 돈 from DAILY_PAY_INFO where OUT_TIME >= '2022-03-01' and OUT_TIME < '2022-03-02' group by STORE_NAME;
 -- select STORE_NAME as 유형, count(*) as 대수, sum(PARK_TIME) as 시간, sum(PAY_AMOUNT) as 돈 from DAILY_PAY_INFO group by STORE_NAME;
 
-select max(MEMBER_NUM) from MEMBER_INFO;
+select * from ACCOUNT_INFO;

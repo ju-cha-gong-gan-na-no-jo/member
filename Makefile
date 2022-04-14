@@ -26,7 +26,7 @@ auto:
 	docker exec -i mysql_db mysql --login-path=root member_db < db/sql/select.sql
 
 temp:
-	docker exec -i mysql_db mysql --login-path=root main_test < db/sql/main_temp.sql
+	docker exec -i mysql_db mysql --login-path=root member_db < db/sql/main_temp.sql
 
 app:
 	node ./node/app.js

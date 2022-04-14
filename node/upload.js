@@ -1,7 +1,8 @@
 const fs = require('fs');
 const AWS = require('aws-sdk');
-const BUCKET_NAME = 'awsjoobucket';
 const env = require("dotenv").config({path: '../.env'});
+const BUCKET_NAME = process.env.bucketName;
+
 
 const s3 = new AWS.S3({accessKeyId: process.env.accessKeyId,
 secretAccessKey: process.env.secretAccessKey});

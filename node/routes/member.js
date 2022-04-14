@@ -126,13 +126,17 @@ app.post('/user/add/:arg', (req, res) => {
   const arg = req.params.arg;
   let sql = '';
 
-  let max_member_num_query = mysql_con_sync.query('select max(MEMBER_NUM) as num from MEMBER_INFO;');
-  max_member_num = max_member_num_query[0].num;
-
   switch(arg){
     // 입주민
     case "member":
-      member_num =  max_member_num + 1;
+      let max_member_num_query = mysql_con_sync.query('select max(MEMBER_NUM) as num from MEMBER_INFO;');
+
+      if(!max_member_num_query[0].num){
+        member_num = 1;
+      }
+      else{
+        member_num =  max_member_num_query[0].num + 1;
+      }
       name = req.body.name;
       dong = req.body.dong;
       ho = req.body.ho;
@@ -141,8 +145,8 @@ app.post('/user/add/:arg', (req, res) => {
       car_num = req.body.car_num;
       remark = req.body.remark;
 
-      sql = 'INSERT INTO MEMBER_INFO(MEMBER_NUM, NAME, DONG, HO, PHONE_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + member_num + ', "'+ name + '", ' + dong + ', ' + ho + ', ' + phone_num + ', ' + member_type_num + ', "' + remark + '");';
-      sql_car = 'INSERT INTO CAR_INFO(CAR_NUM, MEMBER_NUM, MEMBER_TYPE_NUM) VALUES ("' + car_num + '", ' + member_num + ', ' + member_type_num + ');';
+      sql = 'INSERT INTO MEMBER_INFO(MEMBER_NUM, NAME, DONG, HO, PHONE_NUM, MEMBER_TYPE_NUM, REMARK) VALUES (' + member_num + ', "'+ name + '", ' + dong + ', ' + ho + ', "' + phone_num + '", ' + member_type_num + ', "' + remark + '");';
+      sql_num = 'INSERT INTO CAR_INFO(CAR_NUM, MEMBER_NUM, MEMBER_TYPE_NUM) VALUES ("' + car_num + '", ' + member_num + ', ' + member_type_num + ');';
       
       break;
     // 1회 방문자
@@ -172,14 +176,45 @@ app.post('/user/add/:arg', (req, res) => {
       break;
     // 상가
     case "store":
-      store_num = req.body.store_num;
+
+      let max_account_num_query = mysql_con_sync.query('select max(ACCOUNT_NUM) as num from ACCOUNT_INFO;');
+
+      if(!max_account_num_query[0].num){
+        account_num = 1;
+      }
+      else{
+        account_num =  max_account_num_query[0].num + 1;
+      }
+
+      const user_id = req.body.user_id;
+      let password = req.body.password;
+      const account_type = req.body.account_type;
+
+      let encrypt = crypto.createHash("sha256")
+      encrypt.update(password)
+      password = encrypt.digest("hex")
+
+      sql = 'INSERT INTO ACCOUNT_INFO(ACCOUNT_NUM, USER_ID, USER_PW, ACCOUNT_TYPE) VALUES (' + account_num + ', "' + user_id + '", "' + password + '", "' + account_type + '")';
+
+      mysql_con.query(sql, function(err){
+        if (err) console.log(err);
+      });
+
+      let max_store_num_query = mysql_con_sync.query('select max(STORE_NUM) as num from STORE;');
+
+      if(!max_store_num_query[0].num){
+        store_num = 0;
+      }
+      else{
+        store_num =  max_store_num_query[0].num + 1;
+      }
+
       store_name = req.body.store_name;
       phone_num = req.body.phone_num;
       addr = req.body.addr;
       owner_name = req.body.owner_name;
       joined_date = req.body.joined_date;
       withdrew_date = req.body.withdrew_date;
-      account_num = req.body.account_num;
       remark = req.body.remark;
 
       if (withdrew_date == "NULL" || withdrew_date == "null"){
@@ -194,7 +229,7 @@ app.post('/user/add/:arg', (req, res) => {
     if (err) console.log(err);
   });
   if(arg == "member"){
-    mysql_con.query(sql_car, function(err){
+    mysql_con.query(sql_num, function(err){
       if (err) console.log(err);
       res.send("1 record inserted");
     });
@@ -268,7 +303,6 @@ app.post('/user/update/:arg', (req, res) => {
   mysql_con.query(sql, function(err){
     if (err) console.log(err);
     res.send("1 record updated");
-    console.log("1 record updated");
   });
 });
 
@@ -308,7 +342,6 @@ app.post('/user/delete/:arg', (req, res) => {
   mysql_con.query(sql, function(err){
     if (err) console.log(err);
     res.send("1 record deleted");
-    console.log("1 record deleted");
   });
 });
 
@@ -332,7 +365,7 @@ app.post('/user/auth', (req, res) => {
   });
 });
 
-// 회원 가입
+// 관리자 회원 가입
 app.post('/user/create', (req, res) => {
   const username = req.body.username;
   let password = req.body.password;
