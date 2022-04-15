@@ -21,7 +21,7 @@
 <br/>
 
 ## 3. 시스템 아키텍처 구성도
-![링크](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F78557097-a667-48f8-a89b-9fad41e2795b%2FUntitled.png?table=block&id=da61a2d9-3ce5-4f21-b260-82e21d5afb34&spaceId=46a46a25-581b-4261-ba40-fdefadd8fd7a&width=2000&userId=9f1ffc9c-3e09-4541-b4f2-f4c42f6ffbfb&cache=v2)
+![링크](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F22ce3036-77e2-482e-ae77-8df017f5ebba%2FUntitled.png?table=block&id=ceac845d-0681-4603-bde3-785c53e8a67d&spaceId=46a46a25-581b-4261-ba40-fdefadd8fd7a&width=2000&userId=9f1ffc9c-3e09-4541-b4f2-f4c42f6ffbfb&cache=v2)
 
 - AWS Lightsail의 Node.js 인스턴스 내에서 서버를 실행합니다.
 - MySQL의 Docker에는 회원의 정보가 담겨 있습니다.
