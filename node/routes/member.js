@@ -248,15 +248,22 @@ app.post('/user/update/:arg', (req, res) => {
   switch(arg){
     // 입주민
     case "member":
-      member_num = req.body.member_num;
       name = req.body.name;
       dong = req.body.dong;
       ho = req.body.ho;
       phone_num = req.body.phone_num;
-      member_type_num = req.body.member_type_num;
       remark = req.body.remark;
+      car_num = req.body.car_num;
 
-      sql = 'UPDATE MEMBER_INFO SET NAME="' + name + '", DONG=' + dong + ', HO=' + ho + ', PHONE_NUM="' + phone_num + '", MEMBER_TYPE_NUM=' + member_type_num + ', REMARK="' + remark + '" WHERE NAME="' + name_old + '";';
+      let member_num = mysql_con_sync.query("SELECT MEMBER_NUM as num FROM MEMBER_INFO WHERE NAME='" + name_old + "';");
+
+      if (!member_num){
+        res.send("입주민이 아닙니다");
+      }
+      else{
+        mysql_con_sync.query("UPDATE CAR_INFO SET CAR_NUM='" + car_num + "' WHERE MEMBER_NUM=" + member_num[0].num + ";");
+      }
+      sql = 'UPDATE MEMBER_INFO SET NAME="' + name + '", DONG=' + dong + ', HO=' + ho + ', PHONE_NUM="' + phone_num + '", REMARK="' + remark + '" WHERE NAME="' + name_old + '";';
       break;
 
     // 1회 방문자
