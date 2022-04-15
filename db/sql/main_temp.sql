@@ -1,12 +1,8 @@
 -- 19~20시 사이에 주차장에 있는 입주민 수
--- select * from (select distinct p.CAR_NUM, p.IN_TIME, p.OUT_TIME from PARK_STATUS p, CAR_INFO c where p.CAR_NUM=c.CAR_NUM) as r where r.IN_TIME < "2022-03-02 19:00:00" and not (r.OUT_TIME > "2022-03-02 19:00" and r.OUT_TIME < "2022-03-02 20:00");
--- select * from PARK_STATUS order by IN_TIME;
+-- select * from (select distinct p.CAR_NUM, p.IN_TIME, p.OUT_TIME from PARK_STATUS p, CAR_INFO c where p.CAR_NUM=c.CAR_NUM) as r where r.IN_TIME < "2022-03-03 19:00:00" and not (r.OUT_TIME > "2022-03-03 19:00" and r.OUT_TIME < "2022-03-03 20:00");
+SELECT DISTINCT MEMBER_TYPE_NUM as num FROM CAR_INFO where CAR_NUM="123사1234";
+SELECT DISTINCT MEMBER_TYPE_NUM as num FROM GUEST where CAR_NUM="321나6879";
+-- select x.CAR_NUM, x.IN_TIME, x.OUT_TIME from (select k.CAR_NUM, k.TIME_IN as IN_TIME, p.OUT_TIME from (select r.CAR_NUM, max(r.IN_TIME) as TIME_IN from (select distinct p.CAR_NUM, p.IN_TIME, p.OUT_TIME from PARK_STATUS p, CAR_INFO c where p.CAR_NUM=c.CAR_NUM) as r where r.IN_TIME < "2022-03-03 20:00:00" group by r.CAR_NUM order by r.CAR_NUM) as k, PARK_STATUS as p where k.CAR_NUM=p.CAR_NUM and k.TIME_IN=p.IN_TIME order by CAR_NUM) as x where x.OUT_TIME > "2022-03-03 21:00";
 -- 상점 통계 
 -- select STORE_NAME as 유형, count(*) as 대수, sum(PARK_TIME) as 시간, sum(PAY_AMOUNT) as 돈 from DAILY_PAY_INFO where OUT_TIME >= '2022-03-01' and OUT_TIME < '2022-03-02' group by STORE_NAME;
 -- select STORE_NAME as 유형, count(*) as 대수, sum(PARK_TIME) as 시간, sum(PAY_AMOUNT) as 돈 from DAILY_PAY_INFO group by STORE_NAME;
-
--- select * from ACCOUNT_INFO;
-SET foreign_key_checks = 0;
-DELETE FROM ACCOUNT_INFO WHERE ACCOUNT_NUM=3;
-DELETE FROM STORE WHERE STORE_NAME="나나";
-SET foreign_key_checks = 1;

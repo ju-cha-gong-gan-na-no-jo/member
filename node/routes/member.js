@@ -96,29 +96,28 @@ app.post('/user/info/name', (req, res) => {
   });
 });
 
-// 회원여부 조회
+// 회원 유형 조회
 app.post('/user/info/', (req, res) => {
   const car_num = req.body.car_num;
-  let sql = 'SELECT MEMBER_TYPE_NUM FROM CAR_INFO where CAR_NUM="' + car_num + '";';
+  let member, guest, booked;
 
-  mysql_con.query(sql, function(err, result){
-    if (err) 
-      res.send("An error occurred!");
-    else
-    {
-      if (result.length < 1){
-        res.send("올바르지 않은 입력입니다.")
-        return;
-      }
-      const member_type = result[0].MEMBER_TYPE_NUM;
-      if (member_type == 1){
-        res.send("회원")
-      }
-      else{
-        res.send("비회원")
-      }
-    }
-  });
+  // member_type_num = 1
+  member = mysql_con_sync.query('SELECT DISTINCT MEMBER_TYPE_NUM as num FROM CAR_INFO where CAR_NUM="' + car_num + '";');
+  guest = mysql_con_sync.query('SELECT DISTINCT MEMBER_TYPE_NUM as num FROM GUEST where CAR_NUM="' + car_num + '";');
+  booked = mysql_con_sync.query('SELECT DISTINCT MEMBER_TYPE_NUM as num FROM BOOKED where CAR_NUM="' + car_num + '";');
+
+  if(member.length){
+    res.send("회원");
+  }
+  else if(guest.length){
+    res.send("단기방문자");
+  }
+  else if(booked.length){
+    res.send("정기방문자");
+  }
+  else{
+    res.send("잘못된 입력입니다.");
+  }
 });
 
 // 데이터 추가
