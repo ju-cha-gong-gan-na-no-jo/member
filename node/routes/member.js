@@ -101,7 +101,6 @@ app.post('/user/info/', (req, res) => {
   const car_num = req.body.car_num;
   let member, guest, booked;
 
-  // member_type_num = 1
   member = mysql_con_sync.query('SELECT DISTINCT MEMBER_TYPE_NUM as num FROM CAR_INFO where CAR_NUM="' + car_num + '";');
   guest = mysql_con_sync.query('SELECT DISTINCT MEMBER_TYPE_NUM as num FROM GUEST where CAR_NUM="' + car_num + '";');
   booked = mysql_con_sync.query('SELECT DISTINCT MEMBER_TYPE_NUM as num FROM BOOKED where CAR_NUM="' + car_num + '";');
