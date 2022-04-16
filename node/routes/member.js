@@ -218,7 +218,8 @@ app.post('/user/add/:arg', (req, res) => {
       withdrew_date = req.body.withdrew_date;
       remark = req.body.remark;
 
-      if (withdrew_date == "NULL" || withdrew_date == "null"){
+      if (withdrew_date == "NULL" || withdrew_date == "null" || withdrew_date == ""){
+        withdrew_date = "NULL"
         sql = 'INSERT INTO STORE(STORE_NUM, STORE_NAME, PHONE_NUM, ADDR, OWNER_NAME, JOINED_DATE, WITHDREW_DATE, ACCOUNT_NUM, REMARK) VALUES (' + store_num + ', "' + store_name + '", "' + phone_num + '", "' + addr + '", "' + owner_name + '", "' + joined_date + '", ' + withdrew_date + ', ' + account_num + ', "' + remark + '");';
       }
       else{
@@ -272,11 +273,9 @@ app.post('/user/update/:arg', (req, res) => {
       visit_date = req.body.visit_date;
       car_num = req.body.car_num;
       phone_num = req.body.phone_num;
-      member_num = req.body.member_num;
-      member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE GUEST SET NAME="' + name + '", ' + 'VISIT_DATE="' + visit_date + '", CAR_NUM="' + car_num + '", PHONE_NUM="' + phone_num + '", MEMBER_NUM=' + member_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK="' + remark + '" WHERE NAME= "' + name_old + '";';
+      sql = 'UPDATE GUEST SET NAME="' + name + '", ' + 'VISIT_DATE="' + visit_date + '", CAR_NUM="' + car_num + '", PHONE_NUM="' + phone_num + '", REMARK="' + remark + '" WHERE NAME= "' + name_old + '";';
       break;
 
     // 정기 방문자
@@ -287,25 +286,28 @@ app.post('/user/update/:arg', (req, res) => {
       name = req.body.name;
       company_name = req.body.company_name;
       car_num = req.body.car_num;
-      member_type_num = req.body.member_type_num;
       remark = req.body.remark;
 
-      sql = 'UPDATE BOOKED SET BOOKED_PURPOSE=' + booked_purpose + ', VALIDITY=' + validity + ', PHONE_NUM=' + phone_num + ', NAME=' + name + ', COMPANY_NAME=' + company_name + ', CAR_NUM=' + car_num + ', MEMBER_TYPE_NUM=' + member_type_num + ', REMARK=' + remark + 'WHERE NAME= ' + name_old + ';';
+      sql = 'UPDATE BOOKED SET BOOKED_PURPOSE="' + booked_purpose + '", VALIDITY="' + validity + '", PHONE_NUM="' + phone_num + '", NAME="' + name + '", COMPANY_NAME="' + company_name + '", CAR_NUM="' + car_num + '", REMARK="' + remark + '" WHERE NAME= "' + name_old + '";';
       break;
       
     // 상가
     case "store":
-      store_num = req.body.store_num;
       store_name = req.body.store_name;
       phone_num = req.body.phone_num;
       addr = req.body.addr;
       owner_name = req.body.owner_name;
       joined_date = req.body.joined_date;
       withdrew_date = req.body.withdrew_date;
-      account_num = req.body.account_num;
       remark = req.body.remark;
-
-      sql = 'UPDATE STORE SET STORE_NAME="' + store_name + '", PHONE_NUM= "' + phone_num + '", ADDR="' + addr + '", OWNER_NAME="' + owner_name + '", JOINED_DATE="' + joined_date + '", WITHDREW_DATE= "' + withdrew_date + '", ACCOUNT_NUM= ' + account_num + '", REMARK="' + remark + 'WHERE STORE_NAME="' + name_old + '";';
+      
+      if(withdrew_date == "NULL" || withdrew_date == "null" || withdrew_date == ""){
+        withdrew_date = "NULL"
+        sql = 'UPDATE STORE SET STORE_NAME="' + store_name + '", PHONE_NUM= "' + phone_num + '", ADDR="' + addr + '", OWNER_NAME="' + owner_name + '", JOINED_DATE="' + joined_date + '", WITHDREW_DATE= ' + withdrew_date + ', REMARK="' + remark + '" WHERE STORE_NAME="' + name_old + '";';
+      }
+      else{
+        sql = 'UPDATE STORE SET STORE_NAME="' + store_name + '", PHONE_NUM= "' + phone_num + '", ADDR="' + addr + '", OWNER_NAME="' + owner_name + '", JOINED_DATE="' + joined_date + '", WITHDREW_DATE= "' + withdrew_date + '", REMARK="' + remark + '" WHERE STORE_NAME="' + name_old + '";';
+      }
       break;
   }
   mysql_con.query(sql, function(err){
@@ -322,7 +324,7 @@ app.post('/user/delete/:arg', (req, res) => {
     // 입주민
     case "member":
       name = req.body.name;
-
+  
       sql = 'DELETE FROM MEMBER_INFO WHERE NAME="' + name + '";';
       break;
 
@@ -361,10 +363,7 @@ app.post('/user/delete/:arg', (req, res) => {
     mysql_con_sync.query('SET foreign_key_checks = 1;');
   }
   else{
-    mysql_con.query(sql, function(err){
-      if (err) console.log(err);
-      res.send("1 record deleted");
-    });
+    res.send("1 record deleted");
   }
 });
 
