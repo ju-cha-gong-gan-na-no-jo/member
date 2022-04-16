@@ -37,23 +37,23 @@ const mysql_con_sync = new mysql_sync({
 // 전체 데이터 조회
 app.get('/user/info/:arg', (req, res) => {
   const arg = req.params.arg;
-  let sql = 'SELECT * FROM ';
+  let sql;
   switch(arg){
     // 입주민
     case "member":
-      sql = 'SELECT m.MEMBER_NUM, m.NAME, m.DONG, m.HO, m.PHONE_NUM, m.MEMBER_TYPE_NUM, c.CAR_NUM FROM MEMBER_INFO m, CAR_INFO c where m.MEMBER_NUM=c.MEMBER_NUM;';
+      sql = 'SELECT m.MEMBER_NUM, m.NAME, m.DONG, m.HO, m.PHONE_NUM, m.MEMBER_TYPE_NUM, c.CAR_NUM FROM MEMBER_INFO m, CAR_INFO c where m.MEMBER_NUM=c.MEMBER_NUM order by MEMBER_NUM desc;';
       break;
     // 1회 방문자
     case "guest":
-      sql = sql + 'GUEST';
+      sql = "SELECT * FROM GUEST ORDER BY GUEST_NUM desc";
       break;
     // 정기 방문자
     case "book":
-      sql = sql + 'BOOKED';
+      sql = 'SELECT * FROM BOOKED ORDER BY BOOKED_NUM desc';
       break;
     // 상가
     case "store":
-      sql = sql + 'STORE';
+      sql = 'SELECT * FROM STORE ORDER BY STORE_NUM desc';
       break;
   }
 
@@ -324,46 +324,55 @@ app.post('/user/delete/:arg', (req, res) => {
     // 입주민
     case "member":
       name = req.body.name;
-  
-      sql = 'DELETE FROM MEMBER_INFO WHERE NAME="' + name + '";';
+      let member_num = mysql_con_sync.query('SELECT MEMBER_NUM as num FROM MEMBER_INFO WHERE NAME="' + name + '";');
+      if(member_num){
+        member_num = member_num[0].num;
+      }
+      else{
+        console.log("NO MEMBER");
+        res.send("회원이 아닙니다.")
+      }
+      let car_num = mysql_con_sync.query('SELECT CAR_NUM as num from CAR_INFO WHERE MEMBER_NUM="' + member_num + '";');
+      car_num = car_num[0].num;
+      mysql_con_sync.query('SET foreign_key_checks = 0;');
+      mysql_con_sync.query('DELETE FROM CAR_INFO WHERE CAR_NUM="' + car_num + '";');
+      mysql_con_sync.query('DELETE FROM MEMBER_INFO WHERE MEMBER_NUM="' + member_num + '";');
+      mysql_con_sync.query('SET foreign_key_checks = 1;');
+      res.send("1 record deleted");
       break;
 
     // 1회 방문자
     case "guest":
       name = req.body.name;
 
-      sql = 'DELETE FROM GUEST WHERE NAME="' + name + '";';
+      mysql_con_sync.query('DELETE FROM GUEST WHERE NAME="' + name + '";');
+      res.send("1 record deleted");
       break;
     
     // 정기 방문자
     case "book":
       name = req.body.name;
 
-      sql = 'DELETE FROM BOOKED WHERE NAME="' + name + '";';
+      mysql_con_sync.query('DELETE FROM BOOKED WHERE NAME="' + name + '";');
+      res.send("1 record deleted");
       break;
     
     // 상가
     case "store":
       store_name = req.body.store_name;   
       let account_num = mysql_con_sync.query('SELECT ACCOUNT_NUM as num FROM STORE WHERE STORE_NAME="' + store_name + '";');
-      account_num = account_num[0].num;
-
-      mysql_con_sync.query('SET foreign_key_checks = 0;');
-      mysql_con_sync.query('DELETE FROM ACCOUNT_INFO WHERE ACCOUNT_NUM=' + account_num.toString() + ';');
-      mysql_con_sync.query('SELECT * FROM ACCOUNT_INFO;');
-
+      if(!account_num[0]){
+        res.send("잘못된 상점 이름입니다.")
+      }
+      else{
+        account_num = account_num[0].num;
+        mysql_con_sync.query('SET foreign_key_checks = 0;');
+        mysql_con_sync.query('DELETE FROM ACCOUNT_INFO WHERE ACCOUNT_NUM=' + account_num.toString() + ';');
+        mysql_con_sync.query('DELETE FROM STORE WHERE STORE_NAME="' + store_name + '";');
+        mysql_con_sync.query('SET foreign_key_checks = 1;');
+        res.send("1 record deleted");
+      }
       break;
-  }
-  if(arg == "store"){
-    sql = 'DELETE FROM STORE WHERE STORE_NAME="' + store_name + '";';
-    mysql_con.query(sql, function(err){
-      if (err) console.log(err);
-      res.send("1 record deleted");
-    });
-    mysql_con_sync.query('SET foreign_key_checks = 1;');
-  }
-  else{
-    res.send("1 record deleted");
   }
 });
 
