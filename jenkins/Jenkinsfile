@@ -37,7 +37,6 @@ pipeline {
             steps{
                 echo 'run docker container...'
                 sh 'sudo docker run -d --name mysql_db -p 3306:3306 -e MYSQL_ROOT_PASSWORD=member -e MYSQL_DATABASE=wpdb -e MYSQL_USER=wp -e MYSQL_PASSWORD=wppass -v vol_db:/var/lib/mysql emmyuel/mysql:0.3'            
-                sh 'sudo docker exec mysql_db tar -xvf backup.tar.gz -C /var/lib/'
             }
         }
         stage('STEP (6/7) Pull github source'){
