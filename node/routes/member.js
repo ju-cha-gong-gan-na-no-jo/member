@@ -2,9 +2,9 @@ const express = require('express');
 const request = require('request');
 const app = express();
 const mysql = require('mysql');
-const mysql_sync = require('sync-mysql');
+const mysql_sync = require('sync-mysql'); // sql 동기 처리
 const bodyParser = require('body-parser');
-const crypto = require("crypto")
+const crypto = require("crypto") // 비밀번호 암호화
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : false}));
